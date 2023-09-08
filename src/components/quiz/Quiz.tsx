@@ -7,20 +7,20 @@ const Quiz = () => {
   const [formState, setFormState] = useState({
     title: '',
     email: session?.user.email || '',
-    questions: [{ question: '', answers: [{ answer: '', correct: false }] }],
+    questions: [{ question: '', answers: [{ answer: '', is_correct: false }] }],
   });
 
   const addQuestion = () => {
     setFormState((prevState) => ({
       ...prevState,
-      questions: [...prevState.questions, { question: '', answers: [{ answer: '', correct: false }] }],
+      questions: [...prevState.questions, { question: '', answers: [{ answer: '', is_correct: false }] }],
     }));
   };
 
   const addAnswer = (questionIndex: number) => {
     setFormState((prevState) => {
       const updatedQuestions = [...prevState.questions];
-      updatedQuestions[questionIndex].answers.push({ answer: '', correct: false });
+      updatedQuestions[questionIndex].answers.push({ answer: '', is_correct: false });
       return {
         ...prevState,
         questions: updatedQuestions,
@@ -86,7 +86,7 @@ const Quiz = () => {
     setFormState((prevState) => {
       const updatedQuestions = [...prevState.questions];
       updatedQuestions[questionIndex].answers.forEach((answer, index) => {
-        answer.correct = index === answerIndex;
+        answer.is_correct = index === answerIndex;
       });
       return {
         ...prevState,
@@ -142,13 +142,13 @@ const Quiz = () => {
                   onChange={(event) => handleAnswerChange(questionIndex, answerIndex, event)}
                 />
               </label>
-             <label>
+              <label>
+                Правильный ответ
                 <input
                   type="checkbox"
-                  checked={answer.correct}
+                  checked={answer.is_correct}
                   onChange={() => handleCorrectChange(questionIndex, answerIndex)}
                 />
-                Верный ответ
               </label>
               {answerIndex === question.answers.length - 1 && (
                 <button type="button" onClick={() => removeAnswer(questionIndex, answerIndex)}>
@@ -158,7 +158,7 @@ const Quiz = () => {
             </div>
           ))}
           <button type="button" onClick={() => addAnswer(questionIndex)}>
-            Добавить вариант ответа
+            Добавить ответ
           </button>
           {questionIndex === formState.questions.length - 1 && (
             <button type="button" onClick={() => removeQuestion(questionIndex)}>
@@ -170,7 +170,6 @@ const Quiz = () => {
       <button type="button" onClick={addQuestion}>
         Добавить вопрос
       </button>
-      <br />
       <button type="submit">Отправить</button>
     </form>
   );
