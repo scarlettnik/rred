@@ -17,6 +17,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import GoogleSignInButton from "../GoogleSignInButton";
 
 const FormSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email"),
@@ -101,14 +102,17 @@ const SignInForm = () => {
           />
         </div>
         <Button className="w-full mt-6" type="submit">
-          Sign in
+          Войти
         </Button>
       </form>
-      
+      <div className='mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
+        или
+      </div>
+      <GoogleSignInButton>Войти через Google</GoogleSignInButton>
       <p className="text-center text-sm text-gray-600 mt-2">
-        If you don&apos;t have an account, please&nbsp;
-        <Link className="text-blue-500 hover:underline" href="/sign-up">
-          Sign up
+        Если нет аккаунта, пожалуйста
+        <Link className="text-blue-500 hover:underline ml-1" href="/sign-up">
+          зарегистрируйтесь
         </Link>
       </p>
     </Form>
