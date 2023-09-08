@@ -1,54 +1,84 @@
 import { ChangeEvent, useState } from 'react';
+import { Input } from '../ui/input';
+import { useSession } from 'next-auth/react';
 
 const OpenBlank = () => {
-  const [questions, setQuestions] = useState([{ question: '', answer: '' }]);
+  const { data: session } = useSession();
+  const [formState, setFormState] = useState({
+    title: '',
+    email: session?.user.email || '',
+    questions: [{ question: '' }],
+  });
 
   const addQuestion = () => {
-    setQuestions([...questions, { question: '', answer: '' }]);
+    setFormState((prevState) => ({
+      ...prevState,
+      questions: [...prevState.questions, { question: '' }],
+    }));
   };
 
-  const handleQuestionChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index].question = event.target.value;
-    setQuestions(updatedQuestions);
+  const removeQuestion = (questionIndex: number) => {
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions.splice(questionIndex, 1);
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
+    });
   };
 
-  const handleAnswerChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index].answer = event.target.value;
-    setQuestions(updatedQuestions);
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      title: value,
+    }));
   };
 
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
+  const handleQuestionChange = (questionIndex: number, event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions[questionIndex].question = value;
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
+    });
+  };
+
+  const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    console.log(questions);
+    console.log(formState);
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {questions.map((question, index) => (
-        <div key={index}>
+      <div>Привет, {session?.user.email || session?.user.name}</div>
+      <label>
+        Название анкеты
+        <Input type="text" value={formState.title} onChange={handleTitleChange} />
+      </label>
+      {formState.questions.map((question, questionIndex) => (
+        <div key={questionIndex}>
           <label>
-            Вопрос #{index + 1}
-            <input
+            Вопрос #{questionIndex + 1}
+            <Input
               type="text"
               value={question.question}
-              onChange={(event) => handleQuestionChange(index, event)}
+              onChange={(event) => handleQuestionChange(questionIndex, event)}
             />
           </label>
-          <label>
-            Ответ на вопрос #{index + 1}
-            <input
-              type="text"
-              value={question.answer}
-              onChange={(event) => handleAnswerChange(index, event)}
-            />
-          </label>
+          <button type="button" onClick={() => removeQuestion(questionIndex)}>
+            Удалить вопрос
+          </button>
         </div>
       ))}
       <button type="button" onClick={addQuestion}>
         Добавить вопрос
       </button>
+      <br />
       <button type="submit">Отправить</button>
     </form>
   );

@@ -1,50 +1,132 @@
 import { ChangeEvent, useState } from 'react';
+import { Input } from '../ui/input';
+import { useSession } from 'next-auth/react';
 
 const Quiz = () => {
-  const [questions, setQuestions] = useState([{ question: '', answers: [{ answer: '', correct: false }] }]);
+  const { data: session } = useSession();
+  const [formState, setFormState] = useState({
+    title: '',
+    email: session?.user.email || '',
+    questions: [{ question: '', answers: [{ answer: '', correct: false }] }],
+  });
 
   const addQuestion = () => {
-    setQuestions([...questions, { question: '', answers: [{ answer: '', correct: false }] }]);
+    setFormState((prevState) => ({
+      ...prevState,
+      questions: [...prevState.questions, { question: '', answers: [{ answer: '', correct: false }] }],
+    }));
   };
 
-  const addAnswer = (index: number) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index].answers.push({ answer: '', correct: false });
-    setQuestions(updatedQuestions);
+  const addAnswer = (questionIndex: number) => {
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions[questionIndex].answers.push({ answer: '', correct: false });
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
+    });
   };
 
-  const handleQuestionChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index].question = event.target.value;
-    setQuestions(updatedQuestions);
+  const removeQuestion = (questionIndex: number) => {
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions.splice(questionIndex, 1);
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
+    });
+  };
+
+  const removeAnswer = (questionIndex: number, answerIndex: number) => {
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions[questionIndex].answers.splice(answerIndex, 1);
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
+    });
+  };
+
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      title: value,
+    }));
+  };
+
+  const handleQuestionChange = (questionIndex: number, event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions[questionIndex].question = value;
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
+    });
   };
 
   const handleAnswerChange = (questionIndex: number, answerIndex: number, event: ChangeEvent<HTMLInputElement>) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[questionIndex].answers[answerIndex].answer = event.target.value;
-    setQuestions(updatedQuestions);
+    const { value } = event.target;
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions[questionIndex].answers[answerIndex].answer = value;
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
+    });
   };
 
   const handleCorrectChange = (questionIndex: number, answerIndex: number) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[questionIndex].answers.forEach((answer, index) => {
-      answer.correct = index === answerIndex;
+    setFormState((prevState) => {
+      const updatedQuestions = [...prevState.questions];
+      updatedQuestions[questionIndex].answers.forEach((answer, index) => {
+        answer.correct = index === answerIndex;
+      });
+      return {
+        ...prevState,
+        questions: updatedQuestions,
+      };
     });
-    setQuestions(updatedQuestions);
   };
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    console.log(questions);
+    try {
+      const response = await fetch('https://kruase.serveo.net/api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formState),
+      });
+      if (response.ok) {
+        console.log(response);
+      } else {
+        console.log('Form submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {questions.map((question, questionIndex) => (
+      <div>Привет, {session?.user.username || session?.user.name}</div>
+      <label>
+        Название анкеты
+        <Input type="text" value={formState.title} onChange={handleTitleChange} />
+      </label>
+      {formState.questions.map((question, questionIndex) => (
         <div key={questionIndex}>
           <label>
             Вопрос #{questionIndex + 1}
-            <input
+            <Input
               type="text"
               value={question.question}
               onChange={(event) => handleQuestionChange(questionIndex, event)}
@@ -54,30 +136,41 @@ const Quiz = () => {
             <div key={answerIndex}>
               <label>
                 Ответ на вопрос #{questionIndex + 1}, вариант #{answerIndex + 1}
-                <input
+                <Input
                   type="text"
                   value={answer.answer}
                   onChange={(event) => handleAnswerChange(questionIndex, answerIndex, event)}
                 />
               </label>
-              <label>
+             <label>
                 <input
-                  type="radio"
+                  type="checkbox"
                   checked={answer.correct}
                   onChange={() => handleCorrectChange(questionIndex, answerIndex)}
                 />
-                Верный
+                Верный ответ
               </label>
+              {answerIndex === question.answers.length - 1 && (
+                <button type="button" onClick={() => removeAnswer(questionIndex, answerIndex)}>
+                  Удалить ответ
+                </button>
+              )}
             </div>
           ))}
           <button type="button" onClick={() => addAnswer(questionIndex)}>
             Добавить вариант ответа
           </button>
+          {questionIndex === formState.questions.length - 1 && (
+            <button type="button" onClick={() => removeQuestion(questionIndex)}>
+              Удалить вопрос
+            </button>
+          )}
         </div>
       ))}
       <button type="button" onClick={addQuestion}>
         Добавить вопрос
       </button>
+      <br />
       <button type="submit">Отправить</button>
     </form>
   );
