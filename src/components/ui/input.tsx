@@ -1,25 +1,46 @@
-import * as React from "react"
+import * as React from "react";
+import styled from "styled-components";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+const StyledInput = styled.input`
+background-color: #bdbdbd;
+font-size: 1.1rem;
+border-color: transparent;
+transition: border-color 0.3s;
+color: black;
+&:focus,
+&:active {
+outline: none;
+border-color: #ccff00;
+border-width: 2px;
+}
+input::placeholder {
+  color: white;
+}
+&.disabled {
+cursor: not-allowed;
+opacity: 0.5;
+}
+`;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
-    return (
-      <input
-        type={type}
-        className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
-Input.displayName = "Input"
+({ className, type, ...props }, ref) => {
+return (
+<StyledInput
+type={type}
+className={cn(
+"flex h-10 w-full rounded-md border border-input px-3 py-2",
+className
+)}
+ref={ref}
+{...props}
+/>
+);
+}
+);
 
-export { Input }
+Input.displayName = "Input";
+
+export { Input };

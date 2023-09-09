@@ -11,7 +11,7 @@ const GoogleSignInButton: FC<GoogleSignInButtonProps> = ({ children }) => {
   });
 
   return (
-    <Button onClick={loginWithGoogle} className='w-full'>
+    <Button style={{backgroundColor:"#ccff00", color:"black"}} onClick={loginWithGoogle} className='w-full'>
       {children}
     </Button>
   );

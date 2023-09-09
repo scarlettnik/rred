@@ -14,7 +14,7 @@ const LogOut = () => {
           callbackUrl: `${window.location.origin}/sign-in`
         })
       }
-      variant="destructive"
+      style={{backgroundColor:"#ff036c"}}
     >
       Выйти
     </Button>

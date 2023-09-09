@@ -66,9 +66,9 @@ const SignInForm = () => {
     }
   };
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+  return (<div style={{width:"100%", maxWidth:"600px", color:"white", backgroundColor:"#7a7a7a", padding:"1rem", borderRadius:"30px"}}>
+    <Form  {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} >
         <div className="space-y-2">
           <FormField
             control={form.control}
@@ -101,7 +101,7 @@ const SignInForm = () => {
             )}
           />
         </div>
-        <Button className="w-full mt-6" type="submit">
+        <Button style={{backgroundColor:"#ccff00", color:"black"}} className="w-full mt-6" type="submit">
           Войти
         </Button>
       </form>
@@ -111,12 +111,12 @@ const SignInForm = () => {
       <GoogleSignInButton>Войти через Google</GoogleSignInButton>
       <p className="text-center text-sm text-gray-600 mt-2">
         Если нет аккаунта, пожалуйста
-        <Link className="text-blue-500 hover:underline ml-1" href="/sign-up">
+        <Link style={{color:"#ccff00"}} className=" hover:underline ml-1" href="/sign-up">
           зарегистрируйтесь
         </Link>
       </p>
     </Form>
-  );
+    </div>);
 };
 
 export default SignInForm;

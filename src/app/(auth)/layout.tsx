@@ -1,11 +1,14 @@
-import { FC, ReactNode } from 'react';
+'use client'
+
+import React, { FC, ReactNode } from 'react';
 
 interface AuthLayoutProps {
-  children: ReactNode;
+children: ReactNode;
 }
 
+
 const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
-  return <div className='bg-slate-200 p-10 rounded-md'>{children}</div>;
+return <div style={{display:"flex", alignItems:"center", justifyContent:"center", backgroundColor:"#525252", height:"100vh"}}>{children}</div>;
 };
 
 export default AuthLayout;
