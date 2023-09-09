@@ -90,7 +90,7 @@ const HomeAdmin = () => {
     formData.append("file", selectedFile2);
   
     try {
-      const response = await fetch("https://example.com/upload", {
+      const response = await fetch("https://kruase.serveo.net/api/extend/json", {
         method: "POST",
         body: formData,
       });
