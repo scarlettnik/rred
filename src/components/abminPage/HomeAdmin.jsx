@@ -7,37 +7,37 @@ const HomeAdmin = () => {
   const [selectedFile3, setSelectedFile3] = useState(null);
 
   const PressedButton = styled.button`
-  color: black;
-  position: relative;
-  width: 100%;
-  display: block;
-  text-align: center;
-  align-items: center;
-  text-decoration: none;
-  margin-top: 20px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 5px 20px;
-  border-radius: 30px;
-  background-image: linear-gradient(
-    50deg,
-    #4cf5f2 20%,
-    #66ff00 50%,
-    #4cf5f2 100%
-  );
-  background-position: 100% 0;
-  background-size: 200% 200%;
-  font-size: 2vh;
-  font-weight: 300;
-  outline: none;
-  box-shadow: 0 12px 25px 0 rgba(0, 0, 0, 0.3);
-  transition: 0.5s;
+    color: black;
+    position: relative;
+    width: 100%;
+    display: block;
+    text-align: center;
+    align-items: center;
+    text-decoration: none;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px 20px;
+    border-radius: 30px;
+    background-image: linear-gradient(
+      50deg,
+      #4cf5f2 20%,
+      #66ff00 50%,
+      #4cf5f2 100%
+    );
+    background-position: 100% 0;
+    background-size: 200% 200%;
+    font-size: 2vh;
+    font-weight: 300;
+    outline: none;
+    box-shadow: 0 12px 25px 0 rgba(0, 0, 0, 0.3);
+    transition: 0.5s;
 
-  &:hover {
-    box-shadow: 0 0 0 0 rgba(0, 0, 120, 0);
-    background-position: 0 0;
-  }
-`;
+    &:hover {
+      box-shadow: 0 0 0 0 rgba(0, 0, 120, 0);
+      background-position: 0 0;
+    }
+  `;
   const handleFileChange1 = (event) => {
     const file = event.target.files[0];
     setSelectedFile1(file);
@@ -55,25 +55,25 @@ const HomeAdmin = () => {
 
   const handleFileUpload1 = async () => {
     if (!selectedFile1) return;
-  
+
     const formData = new FormData();
     formData.append("file", selectedFile1);
-  
+
     try {
       const response = await fetch("https://kruase.serveo.net/api/extend/txt", {
         method: "POST",
         body: formData,
       });
-  
+
       if (response.ok) {
         const resultFile = await response.blob();
         const downloadUrl = URL.createObjectURL(resultFile);
-  
+
         const link = document.createElement("a");
         link.href = downloadUrl;
         link.download = "result.txt";
         link.click();
-  
+
         setSelectedFile1(null); // Очистить выбранный файл
       } else {
         console.log("File upload failed");
@@ -85,33 +85,36 @@ const HomeAdmin = () => {
 
   const handleFileUpload2 = async () => {
     if (!selectedFile2) return;
-  
+
     const formData = new FormData();
     formData.append("file", selectedFile2);
-  
+
     try {
-      const response = await fetch("https://kruase.serveo.net/api/extend/json", {
-        method: "POST",
-        body: formData,
-      });
-  
+      const response = await fetch(
+        "https://kruase.serveo.net/api/extend/json",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
       if (response.ok) {
         const resultFile = await response.json();
-  
+
         // Создание объекта Blob из JSON-строки
         const blob = new Blob([JSON.stringify(resultFile)], {
           type: "application/json",
         });
-  
+
         // Создание URL для скачивания файла
         const downloadUrl = URL.createObjectURL(blob);
-  
+
         // Создание ссылки для скачивания файла
         const link = document.createElement("a");
         link.href = downloadUrl;
         link.download = "result.json";
         link.click();
-  
+
         setSelectedFile2(null); // Очистить выбранный файл
       } else {
         console.log("File upload failed");
@@ -128,16 +131,25 @@ const HomeAdmin = () => {
     formData.append("file", selectedFile3);
 
     try {
-      const response = await fetch("https://example.com/upload", {
+      const response = await fetch("https://kruase.serveo.net/api/main", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        const resultFile = await response.text();
-        // Здесь можно обработать загруженный файл
-        console.log(resultFile);
-        setSelectedFile3(null); // Очистить выбранный файл
+        const resultFile = await response.json();
+        const blob = new Blob([JSON.stringify(resultFile)], {
+          type: "application/json",
+        });
+
+        const downloadUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = "result.json";
+        link.click();
+
+        setSelectedFile3(null); 
       } else {
         console.log("File upload failed");
       }
@@ -157,7 +169,7 @@ const HomeAdmin = () => {
           marginTop: "2rem",
         }}
       >
-       <svg
+        <svg
           version="1.0"
           xmlns="http://www.w3.org/2000/svg"
           width="410.000000pt"
