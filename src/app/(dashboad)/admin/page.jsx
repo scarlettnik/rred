@@ -75,6 +75,7 @@ export default function Page() {
   const [formData, setFormData] = useState([]);
   const { data: session } = useSession();
   const [view, setView] = useState("home");
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,14 +133,9 @@ export default function Page() {
       console.error(error);
     }
   };
-  const openModal = () => {
-    setModalIsOpen(true);
+  const handleCloseModal = () => {
+    console.log("Modal closed");
   };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
-
   return (
     <>
       <PageContainer>
@@ -150,64 +146,78 @@ export default function Page() {
           {view === "home" && <HomeAdmin setView={setView} />}
         </LeftContent>
         <RightContent>
-          <div>
-            <div>
+  <div>
+    <div>
+      <div
+        style={{
+          color: "white",
+          fontSize: "2.5vh",
+          padding: "1rem",
+          marginLeft: "1rem",
+        }}
+      >
+        Ваши анкеты
+      </div>
+      <div>
+        {formData.length === 0 ? (
+          <div
+            style={{
+              display: "grid",
+              placeItems: "center",
+              height: "100px",
+              color: "white",
+              fontSize: "4vh",
+            }}
+          >
+            Для начала работы создайте анкету
+          </div>
+        ) : (
+          formData.map((item) => (
+            <div key={item.id}>
               <div
                 style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 2fr 6fr",
+                  gap: "1rem",
+                  justifyContent: "space-between",
+                  margin: "1rem",
+                  width: "95%",
+                  padding: "3vh",
+                  borderRadius: "20px",
+                  backgroundColor: "#303030",
                   color: "white",
-                  fontSize: "2.5vh",
-                  padding: "1rem",
-                  marginLeft: "1rem",
+                  fontSize: "2vh",
                 }}
               >
-                Ваши анкеты
+                <h2>{item.title}</h2>
+                <h2 style={{ marginRight: "100px" }}>{item.link}</h2>
+                <PressedButton
+                  style={{ marginRight: "0px" }}
+                  onClick={() => handleButtonClick(item.id)}
+                >
+                  <p style={{ maxWidth: "100%", overflow: "hidden" }}>
+                    Результаты голосования
+                  </p>
+                </PressedButton>
               </div>
-              <div>
-                {formData.map((item) => (
-                  <div key={item.id}>
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 2fr 6fr",
-                        gap: "1rem",
-                        justifyContent: "space-between",
-                        margin: "1rem",
-                        width: "95%",
-                        padding: "3vh",
-                        borderRadius: "20px",
-                        backgroundColor: "#303030",
-                        color: "white",
-                        fontSize: "2vh",
-                      }}
-                    >
-                      <h2>{item.title}</h2>
-                      <h2 style={{ marginRight: "100px" }}>{item.link}</h2>
-                      <PressedButton
-                        style={{ marginRight: "0px" }}
-                        onClick={() => handleButtonClick(item.id)}
-                      >
-                        <p style={{ maxWidth: "100%", overflow: "hidden" }}>
-                          Результаты голосования
-                        </p>
-                      </PressedButton>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {image && (
-                <Modal isOpen={modalIsOpen}>
-                  <img src={image} />
-                </Modal>
-              )}
             </div>
-          </div>
-          <div style={{ display: "none" }} id="div1">
-            {session?.user.email}
-          </div>
-          <div style={{ display: "none" }} id="div2">
-            https://kruase.serveo.net/
-          </div>
-        </RightContent>
+          ))
+        )}
+      </div>
+      {image && (
+        <Modal onClose={handleCloseModal}>
+          <img src={image} />
+        </Modal>
+      )}
+    </div>
+  </div>
+  <div style={{ display: "none" }} id="div1">
+    {session?.user.email}
+  </div>
+  <div style={{ display: "none" }} id="div2">
+    https://kruase.serveo.net/
+  </div>
+</RightContent>
       </PageContainer>
     </>
   );

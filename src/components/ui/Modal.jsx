@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
 const ModalContainer = styled.div`
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,13 +12,16 @@ const ModalContainer = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background-color: white;
-  padding: 20px;
+  background-color: "#ff036c";
+  padding: 10px;
   border-radius: 4px;
 `;
 
-const Modal = ({ isOpen, onClose, children }) => {
+const Modal = ({ children, onClose }) => {
+  const [isOpen, setIsOpen] = useState(true);
+
   const handleClose = () => {
+    setIsOpen(false);
     onClose();
   };
 
@@ -29,10 +30,12 @@ const Modal = ({ isOpen, onClose, children }) => {
   }
 
   return (
-    <ModalContainer>
-      <ModalContent>
+    <ModalContainer className="modal-overlay">
+      <ModalContent className="modal-content">
+        <button style={{width:"7rem", color:"#ff036c", marginRight:"0"}} className="modal-close" onClick={handleClose}>
+          &times;
+        </button>
         {children}
-        <button onClick={handleClose}>Close</button>
       </ModalContent>
     </ModalContainer>
   );
